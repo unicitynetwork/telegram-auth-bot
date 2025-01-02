@@ -1,0 +1,23 @@
+{
+  "name": "telegram-auth-bot",
+  "version": "1.0.0",
+  "description": "Authenticates Telegram user and provides signing service for tx-flow clientside runtime",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unicitynetwork/telegram-auth-bot.git"
+  },
+  "author": "cryptohog",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/unicitynetwork/telegram-auth-bot/issues"
+  },
+  "homepage": "https://github.com/unicitynetwork/telegram-auth-bot#readme",
+  "dependencies": {
+    "@unicitylabs/shared": "^1.0.0",
+    "node-telegram-bot-api": "^0.66.0"
+  }
+}
