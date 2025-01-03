@@ -121,7 +121,32 @@ bot.on('callback_query', async (callbackQuery) => {
 
     // Track state for this user
     userStates[userId].awaitingDestination = true;
+  } else if (callbackQuery.data === 'mint') {
+//      const chatId = msg.chat.id;
+//      const userId = msg.from.id;
+      const secret = deriveSecret(userId);
+      const transport = getHTTPTransport(defaultGateway());
+
+      const token_id = generateRandom256BitHex();
+      const token_class_id = 'aa226da0e61396b9c9ae55131600f3d836058048023af3fe807a9c8b35e11bad';
+      const nonce = generateRandom256BitHex();
+      const token_value = '1000000000000000000';
+      const mint_salt = generateRandom256BitHex();
+      const token = await mint({ 
+        token_id, token_class_id, token_value, secret, nonce, mint_salt, sign_alg: 'secp256k1', hash_alg: 'sha256', transport
+      });
+      const fileContent = exportFlow(token, null, true);
+      const filePath = path.join(__dirname, `${token_id}.txf`);
+
+      fs.writeFileSync(filePath, fileContent);
+
+      // Upload the .txf file
+      await bot.sendDocument(chatId, filePath, {
+	    caption: `Token "${token_id}" minted successfully. Owner: ${userId}`,
+      });
+      fs.unlinkSync(filePath);
   }
+
 });
 
 // Step 3: Handle destination input
@@ -260,11 +285,31 @@ bot.onText(/\/mint/, async (msg) => {
 
 // Start message
 bot.onText(/\/start/, (msg) => {
-  bot.sendMessage(
+/*  bot.sendMessage(
     msg.chat.id,
     `Welcome! Available commands:\n\n` +
       `/getaddr [<@userid|+phonenumber>]- Get your public address or public address for a user with @username or a +phonenumber\n` +
       `/sign <hash> - Sign a 64-character hexadecimal hash\n` +
       `/mint - mints new token for the caller`
-  );
+  );*/
+    const chatId = msg.chat.id;
+
+  bot.sendMessage(chatId, 'Welcome to the Token Manager Bot! Choose an option:', {
+    reply_markup: {
+      inline_keyboard: [
+        [
+          { text: 'Mint Token', callback_data: 'mint' },
+//          { text: 'View Tokens', callback_data: 'view_tokens' },
+        ],
+/*        [
+          { text: 'Help', callback_data: 'help' },
+        ],*/
+      ],
+    },
+  }).then((sentMessage) => {
+    // Pin the menu message
+    bot.pinChatMessage(chatId, sentMessage.message_id).catch((err) => {
+      console.error('Failed to pin message:', err.message);
+    });
+  });
 });
