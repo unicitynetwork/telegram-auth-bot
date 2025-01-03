@@ -263,7 +263,8 @@ bot.onText(/\/start/, (msg) => {
   bot.sendMessage(
     msg.chat.id,
     `Welcome! Available commands:\n\n` +
-      `/getaddr - Get your public address\n` +
-      `/sign <hash> - Sign a 64-character hexadecimal hash`
+      `/getaddr [<@userid|+phonenumber>]- Get your public address or public address for a user with @username or a +phonenumber\n` +
+      `/sign <hash> - Sign a 64-character hexadecimal hash\n` +
+      `/mint - mints new token for the caller`
   );
 });
