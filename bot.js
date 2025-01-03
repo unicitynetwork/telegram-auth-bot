@@ -4,7 +4,8 @@ const fs = require('fs');
 const path = require('path');
 const { generateRecipientPubkeyAddr, getTxSigner, generateRandom256BitHex } = require("@unicitylabs/shared");
 const { hash } = require("@unicitylabs/shared/hasher/sha256hasher.js").SHA256Hasher;
-const { getHTTPTransport, defaultGateway, importFlow, exportFlow, getTokenStatus, mint } = require("@unicitylabs/tx-flow-engine");
+const { getHTTPTransport, defaultGateway, importFlow, exportFlow, 
+    getTokenStatus, mint, createTx } = require("@unicitylabs/tx-flow-engine");
 require('dotenv').config();
 
 const botToken = process.env.BOT_TOKEN;
@@ -89,15 +90,17 @@ bot.on('message', async (msg) => {
 	tokenStatus = status.unspent?'SPENDABLE':'SPENT';
 	// Save the token and file info for this user
         userStates[msg.from.id] = { token, fileId };
-/*	if(status.unspent)
+	if(status.unspent)
 	 reply_keyboard = {
     	    reply_markup: {
         	inline_keyboard: [
-        	    [{ text: 'Send', callback_data: `send:${fileId}` }],
+        	    [{ text: 'Send', callback_data: `send:${hash(fileId).substring(0,59)}` }],
         	],
     	    },
-        };*/
+        };
       }
+
+    console.log(JSON.stringify(reply_keyboard, null, 4));
 
       // Send a message with the token status and a "Manage Token" button
       bot.sendMessage(chatId, `Token Status: ${tokenStatus}`, reply_keyboard);
@@ -114,6 +117,7 @@ bot.on('callback_query', async (callbackQuery) => {
   const userId = callbackQuery.from.id;
 
   if (callbackQuery.data.startsWith('send:')) {
+    if(!userStates[userId])return;
     // Request destination username or phone
     bot.sendMessage(chatId, 'Please enter the destination username (e.g., @exampleusername) or phone number (e.g., +1234567890):', {
       reply_markup: { force_reply: true },
@@ -161,7 +165,7 @@ bot.on('message', async (msg) => {
     try {
       // Resolve the destination username or phone into a public address
       const destUserId = await resolveUserId(`${destination}`);
-      const destinationAddress = generateRecipientPubkeyAddr(destUserId);
+      const destinationAddress = generateRecipientPubkeyAddr(deriveSecret(destUserId));
 
       // Modify the token file
       const { token } = userStates[userId];
@@ -174,7 +178,9 @@ bot.on('message', async (msg) => {
       token.spent = true; // Mark as spent (example modification)
 */
 //      const modifiedContent = JSON.stringify(token, null, 2);
-      const modifiedContent = exportFlow(await importFlow(exportFlow(token, tx, true), deriveSecret(destUserId)));
+	const expTXF = exportFlow(token, tx, true);
+	console.log(expTXF);
+      const modifiedContent = exportFlow(await importFlow(expTXF, deriveSecret(destUserId)));
       const modifiedFilePath = path.join(__dirname, 'modified.txf');
       fs.writeFileSync(modifiedFilePath, modifiedContent);
 
