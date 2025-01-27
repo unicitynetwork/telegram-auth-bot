@@ -17,8 +17,8 @@
   },
   "homepage": "https://github.com/unicitynetwork/telegram-auth-bot#readme",
   "dependencies": {
-    "@unicitylabs/shared": "^1.2.4",
-    "@unicitylabs/tx-flow-engine": "^1.2.4",
+    "@unicitylabs/shared": "^1.2.5",
+    "@unicitylabs/tx-flow-engine": "^1.2.5",
     "axios": "^1.7.9",
     "dotenv": "^16.4.7",
     "node-telegram-bot-api": "^0.66.0"
