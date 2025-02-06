@@ -1,6 +1,10 @@
 {
   "name": "telegram-auth-bot",
+<<<<<<< HEAD
   "version": "1.2.0",
+=======
+  "version": "1.3.2",
+>>>>>>> 54bcf1d... bumped version
   "description": "Authenticates Telegram user and provides signing service for tx-flow clientside runtime",
   "main": "bot.js",
   "scripts": {
@@ -17,8 +21,8 @@
   },
   "homepage": "https://github.com/unicitynetwork/telegram-auth-bot#readme",
   "dependencies": {
-    "@unicitylabs/shared": "^1.2.5",
-    "@unicitylabs/tx-flow-engine": "^1.2.6",
+    "@unicitylabs/shared": "^1.2.8",
+    "@unicitylabs/tx-flow-engine": "^1.3.2",
     "axios": "^1.7.9",
     "dotenv": "^16.4.7",
     "node-telegram-bot-api": "^0.66.0"
